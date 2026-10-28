@@ -10,7 +10,6 @@ export const GET: APIRoute = async () => {
     "/dzielnice/",
     "/sprawdz/",
     "/plan/",
-    "/o-projekcie/",
     "/polityka-prywatnosci/",
     ...districtList.map((d) => `/dzielnice/${d.id}/`),
   ];

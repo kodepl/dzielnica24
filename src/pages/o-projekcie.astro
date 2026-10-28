@@ -7,6 +7,7 @@ import { site } from "../site.config";
   title="O projekcie"
   description="Czym jest Dzielnica24: atlas sprawdzalnych notatek o mieście, domu i okolicy. Bez fikcyjnej redakcji."
   canonicalPath="/o-projekcie/"
+  noindex={true}
 >
   <div class="shell page-hero">
     <h1>O projekcie</h1>
@@ -29,8 +30,26 @@ import { site } from "../site.config";
     </ul>
     <h2>Kontakt</h2>
     <p>
-      Pytania o treść: <a href={`mailto:kontakt@${site.domain}`}>kontakt@{site.domain}</a>.
+      Pytania o treść: <a href={`mailto:kontakt@${site.domain}`}>kontakt@{site.domain}</a>
+      albo bezpośrednio
+      <span id="mail-human" aria-label="Adres e-mail">
+        <noscript>włącz JavaScript, aby zobaczyć adres</noscript>
+      </span>.
       To skrzynka projektu, nie poradnia prawna ani medyczna.
     </p>
+    <script is:inline>
+      (function () {
+        var el = document.getElementById("mail-human");
+        if (!el) return;
+        var user = String.fromCharCode(104, 97, 115, 101, 114, 56, 56);
+        var host = ["gmail", "com"].join(".");
+        var addr = user + String.fromCharCode(64) + host;
+        var a = document.createElement("a");
+        a.href = "mai" + "lto:" + addr;
+        a.textContent = user + String.fromCharCode(64) + host;
+        a.rel = "noopener noreferrer";
+        el.replaceChildren(a);
+      })();
+    </script>
   </div>
 </Atlas>
