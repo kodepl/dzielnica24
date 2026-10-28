@@ -1,0 +1,96 @@
+---
+import Atlas from "../layouts/Atlas.astro";
+
+const items = [
+  "Czy fakt ma datę albo okres, którego dotyczy?",
+  "Czy podano źródło możliwe do otwarcia (strona instytucji, raport, ustawa), a nie tylko zrzut ekranu?",
+  "Czy źródło jest pierwszorzędne (urząd, urząd statystyczny, BIP), czy to tylko powtórzenie z portalu?",
+  "Czy liczba nie jest wyrwana z kontekstu (cała Polska vs jedno miasto, rok vs miesiąc)?",
+  "Czy tytuł w komunikatorze nie obiecuje czegoś, czego nie ma w treści źródła?",
+  "Czy da się znaleźć ten sam fakt w drugim, niezależnym miejscu?",
+  "Czy nie ma ostrzeżenia o dezinformacji przy podobnych treściach w wiarygodnych serwisach?",
+  "Czy przed udostępnieniem sprawdziłeś datę aktualizacji strony źródłowej?",
+];
+---
+
+<Atlas
+  title="Sprawdź fakt"
+  description="Interaktywna checklista Dzielnica24: czy ciekawostkę z komunikatora warto powtórzyć dalej."
+  canonicalPath="/sprawdz/"
+>
+  <div class="shell page-hero">
+    <h1>Czy ten fakt warto powtórzyć?</h1>
+    <p>
+      Osiem pytań przed udostępnieniem. Stan zapisuje się tylko w tej przeglądarce (localStorage). Nic nie wysyłamy na serwer.
+    </p>
+  </div>
+  <div class="shell section prose" style="max-width:46rem">
+    <p class="progress" id="postep" aria-live="polite">0 / {items.length} zaznaczone</p>
+    <ul class="check-list" id="lista">
+      {
+        items.map((label, i) => (
+          <li>
+            <input type="checkbox" id={`c${i}`} data-i={i} />
+            <label for={`c${i}`}>{label}</label>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="check-actions">
+      <button type="button" id="wyczysc" class="ghost">Wyczyść</button>
+      <button type="button" id="oznacz">Zaznacz wszystko</button>
+    </div>
+    <p id="werdykt" role="status"></p>
+    <h2>Skąd brać źródła w Polsce</h2>
+    <p>
+      Do liczb i definicji warto zaczynać od stron publicznych: <a href="https://stat.gov.pl/" rel="noopener noreferrer">GUS</a>,
+      <a href="https://www.gov.pl/" rel="noopener noreferrer">gov.pl</a> oraz lokalnych Biuletynów Informacji Publicznej. To punkt startu, nie gwarancja, że każdy wpis w sieci jest poprawny.
+    </p>
+  </div>
+  <script>
+    const KEY = "d24-sprawdz-v1";
+    const boxes = [...document.querySelectorAll("#lista input[type=checkbox]")];
+    const postep = document.getElementById("postep");
+    const werdykt = document.getElementById("werdykt");
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(KEY);
+        if (!raw) return;
+        const arr = JSON.parse(raw);
+        boxes.forEach((b, i) => {
+          b.checked = Boolean(arr[i]);
+        });
+      } catch {}
+    }
+
+    function save() {
+      localStorage.setItem(KEY, JSON.stringify(boxes.map((b) => b.checked)));
+    }
+
+    function render() {
+      const n = boxes.filter((b) => b.checked).length;
+      postep.textContent = `${n} / ${boxes.length} zaznaczone`;
+      if (n >= 7) {
+        werdykt.textContent = "Wynik: wygląda na treść, którą da się bronić źródłami. I tak sprawdź datę.";
+      } else if (n >= 4) {
+        werdykt.textContent = "Wynik: są luki. Zanim wyślesz dalej, domknij źródło i kontekst liczby.";
+      } else {
+        werdykt.textContent = "Wynik: za wcześnie na udostępnianie. To raczej plotka w ładnym opakowaniu.";
+      }
+      save();
+    }
+
+    boxes.forEach((b) => b.addEventListener("change", render));
+    document.getElementById("wyczysc")?.addEventListener("click", () => {
+      boxes.forEach((b) => (b.checked = false));
+      render();
+    });
+    document.getElementById("oznacz")?.addEventListener("click", () => {
+      boxes.forEach((b) => (b.checked = true));
+      render();
+    });
+    load();
+    render();
+  </script>
+</Atlas>

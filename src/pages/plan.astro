@@ -1,0 +1,78 @@
+---
+import Atlas from "../layouts/Atlas.astro";
+
+const clusters = [
+  {
+    name: "Miasto i rytm",
+    items: [
+      "Jak czytać tablicę przystankową, gdy rozkład „żyje” w aplikacji",
+      "Godziny ciszy nocnej: co jest w przepisach, a co w zwyczaju sąsiadów",
+      "Kiedy hałas z ulicy warto zgłaszać, a kiedy najpierw zmierzyć własne oczekiwania",
+      "Parking „na chwilę”: znaki, które najczęściej mylimy",
+    ],
+  },
+  {
+    name: "Dom i nawyki",
+    items: [
+      "Wilgotność powietrza: co oznacza 40%, a co 70% na tanim higrometrze",
+      "Światło w łazience: barwa a to, jak wygląda skóra rano",
+      "Lista rzeczy do wyłączenia przed wyjściem na dwa dni",
+      "Przechowywanie leków domowych: temperatura i data, nie tylko „w szafce”",
+    ],
+  },
+  {
+    name: "Liczby i fakty",
+    items: [
+      "Jak czytać komunikat GUS bez wpadania w clickbaitowy tytuł",
+      "Inflacja „odczuwalna” vs wskaźnik: różnica w jednym akapicie",
+      "Mapa smogu: co jest pomiarem, a co modelem",
+      "Frekwencja wyborcza w Twojej gminie: gdzie leży oficjalny wynik",
+    ],
+  },
+  {
+    name: "Okolica i kultura",
+    items: [
+      "Plakat na słupie a wydarzenie w BIP: jak potwierdzić termin",
+      "Targi i jarmarki: kto odpowiada za bezpieczeństwo stoisk",
+      "Nazwy osiedli w mapach a nazwy w dokumentach gminy",
+      "Zgłoszenie usterki miejskiej: kanały, które zostawiają ślad",
+    ],
+  },
+  {
+    name: "Praktyczny weekend",
+    items: [
+      "Trasa piesza bez aplikacji: papierowa mapa okolicy jako plan B",
+      "Lista zakupów na dwa dni bez dublowania produktów",
+      "Muzeum lub galeria: jak sprawdzić wolny wstęp i godziny",
+      "Deszczowy plan B w mieście: trzy miejsca z dachem i toaletą",
+    ],
+  },
+];
+---
+
+<Atlas
+  title="Plan 20 tematów"
+  description="Dwudziestka oryginalnych tematów Dzielnica24 pogrupowanych w pięć klastrów dzielnic."
+  canonicalPath="/plan/"
+>
+  <div class="shell page-hero">
+    <h1>Plan 20 tematów</h1>
+    <p>
+      Klastry odpowiadają dzielnicom atlasu. To mapa rozwoju, nie obietnica dat publikacji.
+    </p>
+  </div>
+  <div class="shell section prose" style="max-width:46rem">
+    {
+      clusters.map((c) => (
+        <>
+          <h2>{c.name}</h2>
+          <ol>
+            {c.items.map((t) => (
+              <li>{t}</li>
+            ))}
+          </ol>
+        </>
+      ))
+    }
+  </div>
+</Atlas>

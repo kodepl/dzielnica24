@@ -1,0 +1,35 @@
+---
+import Atlas from "../../layouts/Atlas.astro";
+import { districtList } from "../../site.config";
+---
+
+<Atlas
+  title="Dzielnice tematyczne"
+  description="Pięć spójnych filarów Dzielnica24: rytm miasta, dom, liczby, okolica i praktyczny weekend."
+  canonicalPath="/dzielnice/"
+>
+  <div class="shell page-hero">
+    <h1>Dzielnice tematyczne</h1>
+    <p>
+      To nie kategorie marketingowe. To pięć bloków, które trzymają serwis przy jednym czytelniku: osobie, która chce mniej szumu i więcej sprawdzalnych notatek.
+    </p>
+  </div>
+  <div class="shell section" style="display:grid;gap:0.85rem">
+    {
+      districtList.map((d, i) => (
+        <a
+          href={`/dzielnice/${d.id}/`}
+          style={`display:block;text-decoration:none;border:1px solid var(--line);background:var(--card);padding:1.1rem 1.15rem;border-left:5px solid ${d.hue}`}
+        >
+          <span style="font-family:var(--mono);font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">
+            Blok {String(i + 1).padStart(2, "0")}
+          </span>
+          <strong style="display:block;margin-top:0.35rem;font-family:var(--serif);font-size:1.45rem">
+            {d.name}
+          </strong>
+          <span style="display:block;margin-top:0.35rem;color:var(--muted)">{d.blurb}</span>
+        </a>
+      ))
+    }
+  </div>
+</Atlas>

@@ -1,0 +1,103 @@
+---
+import "../styles/global.css";
+import { site } from "../site.config";
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+  ogImage?: string;
+  type?: "website" | "article";
+  publishedTime?: string;
+}
+
+const {
+  title,
+  description,
+  canonicalPath = "/",
+  ogImage = "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1200&q=80",
+  type = "website",
+  publishedTime,
+} = Astro.props;
+
+const canonical = new URL(canonicalPath, site.origin).href;
+const fullTitle = title.includes(site.name) ? title : `${title} · ${site.name}`;
+const path = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content={type} />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": type === "article" ? "Article" : "WebSite",
+      name: type === "article" ? title : site.name,
+      headline: type === "article" ? title : undefined,
+      description,
+      url: canonical,
+      image: ogImage,
+      inLanguage: "pl-PL",
+      datePublished: publishedTime,
+      publisher: {
+        "@type": "Organization",
+        name: site.name,
+        url: site.origin,
+      },
+    })} />
+  </head>
+  <body>
+    <a class="skip" href="#tresc">Przejdź do treści</a>
+    <header class="shell topbar">
+      <a class="brand" href="/">
+        <span class="brand-mark">Atlas</span>
+        <span class="brand-name">{site.name}</span>
+      </a>
+      <nav class="nav" aria-label="Główne">
+        <a href="/atlas/" aria-current={path.startsWith("/atlas") ? "page" : undefined}>Atlas</a>
+        <a href="/dzielnice/" aria-current={path.startsWith("/dzielnice") ? "page" : undefined}>Dzielnice</a>
+        <a href="/sprawdz/" aria-current={path.startsWith("/sprawdz") ? "page" : undefined}>Sprawdź fakt</a>
+        <a href="/plan/" aria-current={path.startsWith("/plan") ? "page" : undefined}>Plan tematów</a>
+        <a href="/o-projekcie/" aria-current={path.startsWith("/o-projekcie") ? "page" : undefined}>O projekcie</a>
+      </nav>
+    </header>
+    <main id="tresc">
+      <slot />
+    </main>
+    <footer class="shell footer">
+      <nav aria-label="Stopka">
+        <a href="/atlas/">Atlas notatek</a>
+        <a href="/sprawdz/">Checklista źródła</a>
+        <a href="/plan/">Plan 20 tematów</a>
+        <a href="/o-projekcie/">O projekcie</a>
+        <a href="/polityka-prywatnosci/">Prywatność</a>
+      </nav>
+      <p>
+        {site.name} to niezależny projekt contentowy. Nie prowadzi poradni, nie sprzedaje usług i nie podszywa się pod instytucje publiczne.
+      </p>
+    </footer>
+  </body>
+</html>

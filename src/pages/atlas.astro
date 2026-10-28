@@ -1,0 +1,88 @@
+---
+import { getCollection } from "astro:content";
+import Atlas from "../layouts/Atlas.astro";
+import { districtList, districts } from "../site.config";
+
+const notes = (await getCollection("notatki")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<Atlas
+  title="Atlas notatek"
+  description="Filtrowany katalog notatek Dzielnica24 według dzielnicy tematycznej i formy tekstu."
+  canonicalPath="/atlas/"
+>
+  <div class="shell page-hero">
+    <h1>Atlas notatek</h1>
+    <p>
+      Każda notatka ma adres: dzielnicę i formę. Filtr działa lokalnie w przeglądarce, bez konta i bez śledzenia.
+    </p>
+  </div>
+  <div class="shell section">
+    <div class="filter-bar" role="group" aria-label="Filtr dzielnic" id="filtry-dzielnic">
+      <button type="button" data-district="all" aria-pressed="true">Wszystkie</button>
+      {districtList.map((d) => (
+        <button type="button" data-district={d.id} aria-pressed="false">{d.name}</button>
+      ))}
+    </div>
+    <div class="filter-bar" role="group" aria-label="Filtr formy" id="filtry-formy">
+      <button type="button" data-form="all" aria-pressed="true">Każda forma</button>
+      {["instrukcja", "analiza", "porownanie", "faq", "przewodnik"].map((f) => (
+        <button type="button" data-form={f} aria-pressed="false">{f}</button>
+      ))}
+    </div>
+    <div class="atlas-grid" id="atlas-lista">
+      {
+        notes.map((n) => (
+          <a
+            class="atlas-item"
+            href={`/notatki/${n.slug}/`}
+            data-district={n.data.district}
+            data-form={n.data.form}
+          >
+            <span style="font-family:var(--mono);font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted)">
+              {districts[n.data.district].name} · {n.data.form}
+            </span>
+            <strong style="display:block;margin-top:0.35rem;font-family:var(--serif);font-size:1.2rem;line-height:1.25">
+              {n.data.title}
+            </strong>
+            <span style="display:block;margin-top:0.35rem;color:var(--muted);font-size:0.95rem">
+              {n.data.description}
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+  <script>
+    const districtBtns = [...document.querySelectorAll("#filtry-dzielnic button")];
+    const formBtns = [...document.querySelectorAll("#filtry-formy button")];
+    const items = [...document.querySelectorAll(".atlas-item")];
+    let district = "all";
+    let form = "all";
+
+    function apply() {
+      for (const item of items) {
+        const okD = district === "all" || item.dataset.district === district;
+        const okF = form === "all" || item.dataset.form === form;
+        item.hidden = !(okD && okF);
+      }
+    }
+
+    function wire(btns, key) {
+      for (const btn of btns) {
+        btn.addEventListener("click", () => {
+          for (const b of btns) b.setAttribute("aria-pressed", "false");
+          btn.setAttribute("aria-pressed", "true");
+          if (key === "district") district = btn.dataset.district || "all";
+          else form = btn.dataset.form || "all";
+          apply();
+        });
+      }
+    }
+
+    wire(districtBtns, "district");
+    wire(formBtns, "form");
+  </script>
+</Atlas>

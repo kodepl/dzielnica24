@@ -1,0 +1,34 @@
+---
+import Atlas from "../layouts/Atlas.astro";
+import { site } from "../site.config";
+---
+
+<Atlas
+  title="Polityka prywatności"
+  description="Jak Dzielnica24 przetwarza dane: hosting, logi, localStorage checklisty."
+  canonicalPath="/polityka-prywatnosci/"
+>
+  <div class="shell page-hero">
+    <h1>Polityka prywatności</h1>
+    <p>Wersja skrócona, dopasowana do statycznego serwisu.</p>
+  </div>
+  <div class="shell prose section">
+    <h2>Administrator</h2>
+    <p>
+      Serwis {site.name} ({site.domain}). Kontakt: <a href={`mailto:kontakt@${site.domain}`}>kontakt@{site.domain}</a>.
+    </p>
+    <h2>Jakie dane powstają</h2>
+    <ul>
+      <li>Standardowe logi hostingu i sieci CDN (adres IP, data, zasób) potrzebne do bezpieczeństwa i diagnostyki.</li>
+      <li>Checklista „Sprawdź fakt” zapisuje zaznaczenia wyłącznie w localStorage Twojej przeglądarki. Nie wysyłamy ich na serwer.</li>
+    </ul>
+    <h2>Cookies</h2>
+    <p>
+      Serwis nie wymaga konta. Jeśli w przyszłości dołączymy mierzony ruch (np. bezciasteczkowy licznik), opis pojawi się w tej polityce przed włączeniem.
+    </p>
+    <h2>Prawa</h2>
+    <p>
+      W zakresie danych w logach możesz złożyć wniosek na adres kontaktowy. Część logów jest niezbędna do utrzymania usługi i bywa przechowywana przez operatora infrastruktury.
+    </p>
+  </div>
+</Atlas>

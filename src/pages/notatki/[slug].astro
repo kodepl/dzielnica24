@@ -1,0 +1,70 @@
+---
+import { getCollection } from "astro:content";
+import Atlas from "../../layouts/Atlas.astro";
+import { districts } from "../../site.config";
+
+export async function getStaticPaths() {
+  const notes = await getCollection("notatki");
+  return notes.map((note) => ({
+    params: { slug: note.slug },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props;
+const { Content, headings } = await note.render();
+const district = districts[note.data.district];
+const fmt = new Intl.DateTimeFormat("pl-PL", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+---
+
+<Atlas
+  title={note.data.title}
+  description={note.data.description}
+  canonicalPath={`/notatki/${note.slug}/`}
+  ogImage={note.data.image}
+  type="article"
+  publishedTime={note.data.pubDate.toISOString()}
+>
+  <article class="shell prose" style="padding: 1.8rem 0 2.5rem">
+    <p class="meta">
+      <a href={`/dzielnice/${district.id}/`}>{district.name}</a>
+      <span>{note.data.form}</span>
+      <time datetime={note.data.pubDate.toISOString()}>{fmt.format(note.data.pubDate)}</time>
+      <span>{note.data.readingMinutes} min czytania</span>
+    </p>
+    <h1>{note.data.title}</h1>
+    <p class="lead">{note.data.description}</p>
+    <figure class="cover">
+      <img src={note.data.image} alt={note.data.imageAlt} width="960" height="540" loading="eager" />
+      <figcaption>{note.data.imageAlt}</figcaption>
+    </figure>
+    {
+      headings.filter((h) => h.depth === 2).length > 1 && (
+        <nav class="toc" aria-label="Spis treści">
+          <strong>Na tej ulicy</strong>
+          <ol>
+            {headings
+              .filter((h) => h.depth === 2)
+              .map((h) => (
+                <li>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+          </ol>
+        </nav>
+      )
+    }
+    <Content />
+    <p>
+      <a href="/atlas/">Wróć do atlasu</a>
+      {" · "}
+      <a href={`/dzielnice/${district.id}/`}>Więcej z dzielnicy {district.name}</a>
+      {" · "}
+      <a href="/sprawdz/">Sprawdź fakt checklistą</a>
+    </p>
+  </article>
+</Atlas>

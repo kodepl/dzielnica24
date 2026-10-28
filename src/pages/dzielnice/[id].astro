@@ -1,0 +1,50 @@
+---
+import { getCollection } from "astro:content";
+import Atlas from "../../layouts/Atlas.astro";
+import { districtList, districts, type DistrictId } from "../../site.config";
+
+export function getStaticPaths() {
+  return districtList.map((d) => ({ params: { id: d.id } }));
+}
+
+const id = Astro.params.id as DistrictId;
+const district = districts[id];
+const notes = (await getCollection("notatki"))
+  .filter((n) => n.data.district === id)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<Atlas
+  title={district.name}
+  description={district.blurb}
+  canonicalPath={`/dzielnice/${id}/`}
+>
+  <div class="shell page-hero">
+    <p style={`font-family:var(--mono);font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;color:${district.hue}`}>
+      Dzielnica
+    </p>
+    <h1>{district.name}</h1>
+    <p>{district.blurb}</p>
+  </div>
+  <div class="shell section">
+    {
+      notes.length === 0 ? (
+        <p>W tej dzielnicy pojawią się kolejne notatki. Zobacz <a href="/plan/">plan tematów</a>.</p>
+      ) : (
+        <ol class="note-list">
+          {notes.map((n) => (
+            <li>
+              <a href={`/notatki/${n.slug}/`}>
+                <time datetime={n.data.pubDate.toISOString()}>{n.data.form}</time>
+                <span>
+                  <strong>{n.data.title}</strong>
+                  <em>{n.data.description}</em>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      )
+    }
+  </div>
+</Atlas>

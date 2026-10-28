@@ -1,0 +1,116 @@
+---
+import { getCollection } from "astro:content";
+import Atlas from "../layouts/Atlas.astro";
+import { districtList, site } from "../site.config";
+
+const notes = (await getCollection("notatki")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const featured = notes.find((n) => n.data.evergreen) ?? notes[0];
+const rest = notes.filter((n) => n.slug !== featured.slug).slice(0, 4);
+
+const fmt = new Intl.DateTimeFormat("pl-PL", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+});
+---
+
+<Atlas
+  title={`${site.name} — ${site.tagline}`}
+  description={site.description}
+  canonicalPath="/"
+  ogImage={featured.data.image}
+>
+  <div class="shell mast">
+    <div>
+      <h1>Mapa faktów z&nbsp;codziennej dzielnicy</h1>
+      <p class="mast-lead">
+        Nie kolejny portal z siatką newsów. Dzielnica24 układa praktyczne notatki jak ulice: po rytmie miasta, domu, liczbach ze źródeł i ogłoszeniach z okolicy.
+      </p>
+    </div>
+    <aside class="mast-aside" aria-label="Po co ten serwis">
+      <strong>Pożytek</strong>
+      <p>
+        Czytelnik dostaje krótką ścieżkę: co sprawdzić, gdzie zajrzeć i kiedy lepiej nie powtarzać plotki z komunikatora.
+      </p>
+    </aside>
+  </div>
+
+  <div class="shell district-rail" aria-label="Dzielnice tematyczne">
+    {
+      districtList.map((d, i) => (
+        <a class="district-chip" href={`/dzielnice/${d.id}/`} style={`border-top: 3px solid ${d.hue}`}>
+          <span>Blok {String(i + 1).padStart(2, "0")}</span>
+          <strong>{d.name}</strong>
+          <em>{d.blurb}</em>
+        </a>
+      ))
+    }
+  </div>
+
+  <div class="shell board">
+    <article class="pole">
+      <img src={featured.data.image} alt={featured.data.imageAlt} width="960" height="540" loading="eager" />
+      <div class="pole-body">
+        <div class="pole-meta">
+          <span>Na słupie</span>
+          <span>{featured.data.district}</span>
+          <time datetime={featured.data.pubDate.toISOString()}>{fmt.format(featured.data.pubDate)}</time>
+        </div>
+        <h2>
+          <a href={`/notatki/${featured.slug}/`}>{featured.data.title}</a>
+        </h2>
+        <p>{featured.data.description}</p>
+      </div>
+    </article>
+    <div class="side-stack" aria-label="Kolejne notatki">
+      {
+        rest.map((n) => (
+          <a class="side-card" href={`/notatki/${n.slug}/`}>
+            <span>{n.data.form} · {n.data.district}</span>
+            <strong>{n.data.title}</strong>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+
+  <section class="shell section" aria-labelledby="narzedzia-title">
+    <div class="section-head">
+      <h2 id="narzedzia-title">Narzędzia atlasu</h2>
+    </div>
+    <div class="tools">
+      <a class="tool" href="/atlas/">
+        <span>Katalog</span>
+        <strong>Filtruj notatki po dzielnicy i formie</strong>
+      </a>
+      <a class="tool" href="/sprawdz/">
+        <span>Checklista</span>
+        <strong>Czy ten fakt warto powtórzyć?</strong>
+      </a>
+    </div>
+  </section>
+
+  <section class="shell section" aria-labelledby="lista-title">
+    <div class="section-head">
+      <h2 id="lista-title">Wszystkie notatki</h2>
+      <a href="/atlas/">Otwórz atlas</a>
+    </div>
+    <ol class="note-list">
+      {
+        notes.map((n) => (
+          <li>
+            <a href={`/notatki/${n.slug}/`}>
+              <time datetime={n.data.pubDate.toISOString()}>{fmt.format(n.data.pubDate)}</time>
+              <span>
+                <strong>{n.data.title}</strong>
+                <em>{n.data.description}</em>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</Atlas>

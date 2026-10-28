@@ -1,0 +1,36 @@
+---
+import Atlas from "../layouts/Atlas.astro";
+import { site } from "../site.config";
+---
+
+<Atlas
+  title="O projekcie"
+  description="Czym jest Dzielnica24: atlas sprawdzalnych notatek o mieście, domu i okolicy. Bez fikcyjnej redakcji."
+  canonicalPath="/o-projekcie/"
+>
+  <div class="shell page-hero">
+    <h1>O projekcie</h1>
+    <p>{site.tagline}</p>
+  </div>
+  <div class="shell prose section">
+    <h2>Po co powstał serwis</h2>
+    <p>
+      Dzielnica24.pl wcześniej bywała miejscem przypadkowych tekstów (ubezpieczenia, akcesoria, obce promocje). Ten projekt zaczyna od zera: jedna tożsamość, jeden czytelnik, zero udawania instytucji.
+    </p>
+    <h2>Dla kogo</h2>
+    <p>
+      Dla osoby, która mieszka w polskim mieście albo dojeżdża do niego i chce szybko odróżnić fakt od plotki z grupy osiedlowej. Korzyść: mniej czasu na sprawdzanie, mniej wstydliwych udostępnień.
+    </p>
+    <h2>Czego tu nie ma</h2>
+    <ul>
+      <li>Fikcyjnych ekspertów, tytułów naukowych i „zespołu redakcyjnego z adresem biura”.</li>
+      <li>Wymyślonych badań i „naszych testów laboratoryjnych”.</li>
+      <li>Automatycznych linków do innych projektów bez związku z tematem.</li>
+    </ul>
+    <h2>Kontakt</h2>
+    <p>
+      Pytania o treść: <a href={`mailto:kontakt@${site.domain}`}>kontakt@{site.domain}</a>.
+      To skrzynka projektu, nie poradnia prawna ani medyczna.
+    </p>
+  </div>
+</Atlas>
